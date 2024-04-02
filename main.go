@@ -11,11 +11,7 @@ import (
 )
 
 func main() {
-	fmt.Println("CalculatorGo v.0.1\n" +
-		"Rules:\n" +
-		"1. Пожалуйста, используйте только арабские/римские цифры и математические операторы '+', '-', '/', '*'\n" +
-		"2. Пожалуйста, используйте только арабские или только римские цифры\n")
-
+	fmt.Println("CalculatorGo v.0.1")
 	intType, first, second, sign, err := readLine()
 	if err != nil {
 		fmt.Println("Возникла ошибка при вводе данных:\n", err)
