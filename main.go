@@ -11,144 +11,134 @@ import (
 )
 
 func main() {
-	fmt.Println("CalculatorGo v.0.1")
-	intType, first, second, sign, err := readLine()
-	if err != nil {
-		fmt.Println("Возникла ошибка при вводе данных:\n", err)
-		return
-	}
-	if intType == "arab" {
-		firstNum, err1 := strconv.Atoi(first)
-		if err1 != nil {
-			fmt.Println("Возникла ошибка при переводе строки в число:\n", err1)
-			return
-		}
-		secondNum, err2 := strconv.Atoi(second)
-		if err2 != nil {
-			fmt.Println("Возникла ошибка при переводе строки в число:\n", err2)
-			return
-		}
-		res, err3 := calculator(firstNum, secondNum, sign)
-		if err3 != nil {
-			fmt.Println("Возникла ошибка при работе калькулятора:\n", err3)
-			return
-		} else {
-			fmt.Println("Ответ: ", res)
-		}
-	} else {
-		firstNum := fromRomanToInt(first)
-		secondNum := fromRomanToInt(second)
-		res, err1 := calculator(firstNum, secondNum, sign)
-		if err1 != nil {
-			fmt.Println("Возникла ошибка при работе калькулятора:\n", err1)
-			return
-		} else {
-			final, err2 := fromIntToRoman(res)
-			if err2 != nil {
-				fmt.Println("Возникла ошибка при работе калькулятора:\n", err2)
-				return
-			}
-			fmt.Println("Ответ: ", final)
-		}
-	}
+          fmt.Println("CalculatorGo v.0.1")
+       intType, first, second, sign, err := readLine()
+       if err != nil {
+       panic(fmt.Sprintf("Ошибка при вводе данных:\n%s", err))
+ }
+        if intType == "arab" {
+       firstNum, err1 := strconv.Atoi(first)
+       if err1 != nil {
+       panic(fmt.Sprintf("Ошибка при переводе строки в число:\n%s", err1))
+  }
+       secondNum, err2 := strconv.Atoi(second)
+       if err2 != nil {
+       panic(fmt.Sprintf("Ошибка при переводе строки в число:\n%s", err2))
+  }
+       res, err3 := calculator(firstNum, secondNum, sign)
+       if err3 != nil {
+        panic(fmt.Sprintf("Ошибка при работе калькулятора:\n%s", err3))
+  } else {
+        fmt.Println("Ответ: ", res)
+  }
+ } else {
+        firstNum := fromRomanToInt(first)
+       secondNum := fromRomanToInt(second)
+       res, err1 := calculator(firstNum, secondNum, sign)
+        if err1 != nil {
+        panic(fmt.Sprintf("Ошибка при работе калькулятора:\n%s", err1))
+  } else {
+        final, err2 := fromIntToRoman(res)
+       if err2 != nil {
+       panic(fmt.Sprintf("Ошибка при работе калькулятора:\n%s", err2))
+   }
+        fmt.Println("Ответ: ", final)
+  }
+ }
 }
 
 func calculator(first int, second int, sign string) (int, error) {
-	if first > 10 || second > 10 {
-		return 8, errorHandler(8)
-	}
-	switch {
-	case sign == "+":
-		return first + second, nil
-	case sign == "-":
-		return first - second, nil
-	case sign == "*":
-		return first * second, nil
-	case sign == "/" && second != 0:
-		return first / second, nil
-	case sign == "/" && second == 0:
-		return 4, errorHandler(4)
-	default:
-		return 5, errorHandler(5)
-	}
+       switch {
+       case sign == "+":
+        return first + second, nil
+       case sign == "-":
+        return first - second, nil
+       case sign == "*":
+         return first * second, nil
+       case sign == "/" && second != 0:
+       return first / second, nil
+        case sign == "/" && second == 0:
+        panic("Деление на ноль")
+       default:
+       panic("Неверный оператор")
+ }
 }
+
 func readLine() (string, string, string, string, error) {
-	stdin := bufio.NewReader(os.Stdin)
-	usInput, _ := stdin.ReadString('\n')
-	usInput = strings.TrimSpace(usInput)
-	intType, first, second, sign, err := checkInput(usInput)
-	if err != nil {
-		return "", "", "", "", err
-	}
-	return intType, first, second, sign, err
+       stdin := bufio.NewReader(os.Stdin)
+       usInput, _ := stdin.ReadString('\n')
+       usInput = strings.TrimSpace(usInput)
+       intType, first, second, sign, err := checkInput(usInput)
+ if err != nil {
+   return "", "", "", "", err
+ }
+   return intType, first, second, sign, err
 }
 
 func checkInput(input string) (string, string, string, string, error) {
-	r := regexp.MustCompile("\\s+")
-	replace := r.ReplaceAllString(input, "")
-	arr := strings.Split(replace, "")
-	var intType, first, second, sign string
-	for index, value := range arr {
-		isN := isNumber(value)
-		isS := isSign(value)
-		isR := isRomanNumber(value)
-		if !isN && !isS && !isR {
-			return "", "", "", "", errorHandler(1)
-		}
-		if isS {
-			if sign != "" {
-				return "", "", "", "", errorHandler(6)
-			} else {
-				sign = arr[index]
-			}
-		}
-		if (isN && intType != "roman") || (isR && intType != "arab") {
-			if intType == "" {
-				if isN {
-					intType = "arab"
-				} else {
-					intType = "roman"
-				}
-			}
-			if first == "" && !(index+1 == len(arr)) && isSign(arr[index+1]) {
-				slice := arr[0:(index + 1)]
-				first = strings.Join(slice, "")
-			} else if index+1 == len(arr) && first != "" {
-				slice := arr[(len(first) + 1):]
-				second = strings.Join(slice, "")
-			}
-		} else if (intType == "arab" && isR) || (intType == "roman" && isN) {
-			return "", "", "", "", errorHandler(2)
-		}
-	}
-	if second == "" || first == "" || sign == "" {
-		return "", "", "", "", errorHandler(3)
-	}
-	return intType, first, second, sign, nil
+       r := regexp.MustCompile("\\s+")
+       replace := r.ReplaceAllString(input, "")
+       arr := strings.Split(replace, "")
+ var intType, first, second, sign string
+ for index, value := range arr {
+        isN := isNumber(value)
+       isS := isSign(value)
+       isR := isRomanNumber(value)
+  if !isN && !isS && !isR {
+   panic("Недопустимые символы в выражении")
+  }
+  if isS {
+   if sign != "" {
+    panic("Нет допустимых операторов")
+   } else {
+    sign = arr[index]
+   }
+  }
+  if (isN && intType != "roman") || (isR && intType != "arab") {
+   if intType == "" {
+    if isN {
+     intType = "arab"
+    } else {
+     intType = "roman"
+    }
+   }
+   if first == "" && !(index+1 == len(arr)) && isSign(arr[index+1]) {
+    slice := arr[0 : index+1]
+    first = strings.Join(slice, "")
+   } else if index+1 == len(arr) && first != "" {
+    slice := arr[(len(first) + 1):]
+    second = strings.Join(slice, "")
+   }
+  } else if (intType == "arab" && isR) || (intType == "roman" && isN) {
+   panic("Неверный тип числа (арабское и римское)")
+  }
+ }
+ if second == "" || first == "" || sign == "" {
+  panic("Недостаточно данных в выражении")
+ }
+ return intType, first, second, sign, nil
 }
 
 func isNumber(c string) bool {
-	if c >= "0" && c <= "9" {
-		return true
-	} else {
-		return false
-	}
+ if c >= "0" && c <= "9" {
+  return true
+ }
+ return false
 }
 
 func isSign(c string) bool {
-	if c == "+" || c == "-" || c == "/" || c == "*" {
-		return true
-	} else {
-		return false
-	}
+ if c == "+" || c == "-" || c == "/" || c == "*" {
+  return true
+ }
+ return false
 }
+
 func isRomanNumber(c string) bool {
-	_, ok := dict[c]
-	if ok {
-		return true
-	} else {
-		return false
-	}
+ _, ok := dict[c]
+ if ok {
+       return true
+ }
+       return false
 }
 
 func errorHandler(code int) error {
