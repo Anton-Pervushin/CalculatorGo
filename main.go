@@ -25,6 +25,9 @@ func main() {
        if err2 != nil {
        panic(fmt.Sprintf("Ошибка при переводе строки в число:\n%s", err2))
   }
+       if firstNum > 10 || secondNum > 10 {
+       panic("Число должно быть не больше 10")
+  }
        res, err3 := calculator(firstNum, secondNum, sign)
        if err3 != nil {
         panic(fmt.Sprintf("Ошибка при работе калькулятора:\n%s", err3))
@@ -32,11 +35,14 @@ func main() {
         fmt.Println("Ответ: ", res)
   }
  } else {
-        firstNum := fromRomanToInt(first)
-       secondNum := fromRomanToInt(second)
-       res, err1 := calculator(firstNum, secondNum, sign)
-        if err1 != nil {
-        panic(fmt.Sprintf("Ошибка при работе калькулятора:\n%s", err1))
+      firstNum := fromRomanToInt(first)
+      secondNum := fromRomanToInt(second)
+      if firstNum > 10 || secondNum > 10 {
+       panic("Число должно быть не больше 10")
+      }
+      res, err1 := calculator(firstNum, secondNum, sign)
+      if err1 != nil {
+       panic(fmt.Sprintf("Ошибка при работе калькулятора:\n%s", err1))
   } else {
         final, err2 := fromIntToRoman(res)
        if err2 != nil {
